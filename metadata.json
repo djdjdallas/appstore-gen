@@ -1,0 +1,5 @@
+{
+  "name": "AppStoreGen AI",
+  "description": "AI-powered App Store screenshot generator. Describe your app, and Gemini creates a fully editable, layered design layout.",
+  "requestFramePermissions": []
+}
