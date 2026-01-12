@@ -76,7 +76,7 @@ export const Editor: React.FC<EditorProps> = ({
     <div className="flex-1 bg-slate-950 overflow-auto relative flex p-8">
        {/* Canvas Container */}
        <div 
-        className="shadow-2xl shadow-black relative m-auto shrink-0"
+        className="shadow-2xl shadow-black relative m-auto shrink-0 transition-all duration-200"
         style={{ width: canvasConfig.width, height: canvasConfig.height }}
        >
          <svg

@@ -19,27 +19,36 @@ export const generateLayout = async (
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   const prompt = `
-    You are a world-class UI/UX designer specializing in high-conversion App Store screenshots.
-    
-    Task: Design a layered screenshot layout for:
-    App Name: "${appName}"
+    You are a professional App Store screenshot designer. Generate a PRECISE layout.
+
+    App: "${appName}"
     Description: "${description}"
-    Style Vibe: ${stylePreset}
-    Canvas Dimensions: ${currentCanvas.width}x${currentCanvas.height}
+    Style: ${stylePreset}
+    Canvas: ${currentCanvas.width}x${currentCanvas.height}
 
-    Design Rules:
-    1. **Visual Hierarchy**: Create a depth-based composition. Background -> Abstract Shapes -> Device Frame -> Headlines -> Floating Elements.
-    2. **Device**: Include exactly one 'DEVICE' layer. This represents the phone.
-    3. **Images**: Use 'IMAGE' layers for additional visuals (e.g., floating UI cards, avatars, icons, or background photos).
-    4. **Image Prompts**: For the 'content' field of 'IMAGE' layers, write a **specific, descriptive prompt** for an AI image generator (e.g., "fitness dashboard UI with heart rate graph", "running shoes icon", "abstract tech waves"). **DO NOT** use generic IDs or "placeholder".
-    5. **Device Context**: Name the 'DEVICE' layer descriptively (e.g., "${appName} App Screen") so we can generate a matching UI for it.
-    6. **Text**: Write punchy, marketing-oriented copy. 2-3 text layers max (Headline + Subtitle).
-    7. **Layout**: Center the main device, but feel free to offset shapes for a dynamic look. Ensure elements fit within ${currentCanvas.width}x${currentCanvas.height}.
+    STRICT LAYOUT RULES:
+    1. HEADLINE: Position at y=${Math.round(currentCanvas.height * 0.08)}, centered (x=${currentCanvas.width/2}), width=${currentCanvas.width - 40}
+    2. SUBHEADLINE: Position at y=${Math.round(currentCanvas.height * 0.15)}, centered, width=${currentCanvas.width - 60}
+    3. DEVICE: Center of canvas (x=${currentCanvas.width/2 - 120}, y=${Math.round(currentCanvas.height * 0.28)}), width=240, height=480
+    4. Optional decorative shapes: Keep them subtle, opacity 0.3-0.6, positioned in corners or behind device
 
-    Schema Requirements:
-    - Output valid JSON.
-    - layers.type enum: ['TEXT', 'SHAPE', 'DEVICE', 'IMAGE']
-    - For DEVICE layers, 'content' should be "device_frame".
+    REQUIRED LAYERS (in this exact order):
+    1. One background SHAPE (full canvas, subtle gradient or solid)
+    2. One DEVICE layer named "${appName} App Screen"
+    3. One TEXT layer for headline (bold, 28-36px, high contrast)
+    4. One TEXT layer for subheadline (regular, 16-20px)
+    5. 0-2 decorative SHAPE layers (circles, rounded rects for visual interest)
+
+    COLOR RULES for "${stylePreset}":
+    ${stylePreset === 'dark' ? '- Background: #0f172a to #1e293b range\n- Text: #ffffff or #f1f5f9\n- Accents: #3b82f6, #8b5cf6' : ''}
+    ${stylePreset === 'minimal' ? '- Background: #ffffff or #f8fafc\n- Text: #0f172a or #1e293b\n- Accents: #e2e8f0' : ''}
+    ${stylePreset === 'bold' ? '- Background: #000000\n- Text: #ffffff\n- Accents: Vibrant colors #ef4444, #f59e0b, #10b981' : ''}
+    ${stylePreset === 'colorful' ? '- Background: Gradient from bright colors\n- Text: #ffffff with shadow\n- Accents: Multiple vibrant colors' : ''}
+
+    DO NOT be creative with positioning. Follow the exact coordinates above.
+
+    Ensure you output valid JSON matching the schema.
+    For DEVICE layers, set 'content' to "device_frame".
     `;
 
   const response = await ai.models.generateContent({
